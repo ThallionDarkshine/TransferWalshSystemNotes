@@ -1,0 +1,3051 @@
+<html>
+    <head>
+        <title>2/1 Transfer Walsh</title>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script type="text/javascript">
+            function replaceText(selector, text, newText, flags) {
+                var matcher = new RegExp(text, flags);
+                $(selector).each(function () {
+                    var $this = $(this);
+                    $this.html($this.html().replace(matcher, newText));
+                });
+            }
+            
+            function replaceSuitSymbols() {
+                replaceText("div, p, span, h1, h2, h3, h4, a", /!D/g, "<span class=\"red\">&diams;</span>");
+                replaceText("div, p, span, h1, h2, h3, h4, a", /!H/g, "<span class=\"red\">&hearts;</span>");
+                replaceText("div, p, span, h1, h2, h3, h4, a", /!C/g, "&clubs;");
+                replaceText("div, p, span, h1, h2, h3, h4, a", /!S/g, "&spades;");
+                replaceText("div, p, span, h1, h2, h3, h4", /-/g, "&ndash;");
+            }
+            
+            function buildBreadcrumbs() {
+                $('table').each(function() {
+                    var bidEls = $(this).find('h4');
+                    var header = bidEls.first();
+                    var tableId = $(this).attr('id');
+                    var bids = tableId.split("_");
+                    var textData = header.html();
+                    var textBids = textData.split(" - ");
+                    var breadCrumbs = [];
+                    
+                    if (bids.length > 2) {
+                        for (var i = 0;i < bids.length - 2;++i) {
+                            var link = bids.slice(0, i + 1).join("_") + "_Responses";
+                            breadCrumbs.push("<a class=\"breadcrumb\" href=\"#" + link + "\">" + textBids[i] + "</a>");
+                        }
+                        breadCrumbs.push(textBids[textBids.length - 2]);
+                        breadCrumbs.push(textBids[textBids.length - 1]);
+                        
+                        header.html(breadCrumbs.join(" - "));
+                    }
+                    
+                    bidEls.slice(1).each(function() {
+                        var links = [];
+                        var newBids = $(this).html().split(" / ");
+                        
+                        console.log(newBids);
+                        
+                        newBids.forEach(function(bid) {
+                            var cleanBid = bid.replace(/[\s!]/g, "")
+                        
+                            var newBidLink = bids.slice(0, bids.length - 1).join("_") + "_" + cleanBid + "_Responses";
+                            
+                            if ($('#' + newBidLink).length > 0) {
+                                var link = "<a class=\"breadcrumb\" href=\"#" + newBidLink + "\">" + bid + "</a>";
+                                links.push(link);
+                            } else {
+                                links.push(bid);
+                            }
+                        });
+                        
+                        $(this).html(links.join(" / "));
+                    });
+                });
+            }
+            
+            function setupExpanders() {
+                $('a.expander').click(function () {
+                    $(this).parents('table').toggleClass('expanded');
+                });
+                
+                $('a.breadcrumb').click(function() {
+                    $(this).parents('table').toggleClass('expanded');
+                    $('table#' + $(this).attr('href').slice(1)).toggleClass('expanded');
+                });
+            }
+        
+            $(document).ready(buildBreadcrumbs);
+            $(document).ready(replaceSuitSymbols);
+            $(document).ready(setupExpanders);
+        </script>
+        <style type="text/css">
+            body {
+                font-family: Calibri;
+                font-size: 16px;
+            }
+        
+            .red {
+                color: #f00;
+            }
+            
+            h1 {
+                font-family: Calibri;
+                font-weight: 100;
+                font-size: 32px;
+                margin: 4px;
+            }
+            
+            h2 {
+                font-family: Calibri;
+                font-weight: 100;
+                font-size: 24px;
+                margin: 4px;
+            }
+            
+            h3 {
+                font-family: Calibri;
+                font-weight: 100;
+                font-size: 20px;
+                margin: 4px;
+            }
+            
+            h4 {
+                font-family: Calibri;
+                font-weight: 700;
+                font-size: 16px;
+                margin: 4px;
+            }
+            
+            div.contents {
+                display: flex;
+                max-width: 800px;
+            }
+            
+            div.contentsCol {
+                flex: 50%;
+            }
+            
+            div.header {
+                font-family: Calibri;
+                font-weight: 700;
+                font-size: 40px;
+                max-width: 600px;
+                width: 100%;
+                text-align: center;
+            }
+            
+            table {
+                width: 100%;
+                max-width: 800px;
+                border-collapse: collapse;
+            }
+            
+            table td {
+                vertical-align: middle;
+                margin-top: auto;
+                margin-bottom: auto;
+            }
+            
+            td:nth-child(1) {
+                padding-left: 16px;
+                width: 30%;
+            }
+            
+            tr:nth-child(1) {
+                border-bottom: 1px solid black;
+                margin-bottom: 0px;
+            }
+            
+            tr:nth-child(1) td:nth-child(1) {
+                padding-left: 0px;
+            }
+            
+            tr:nth-child(1) td:nth-child(2) {
+                text-align: right;
+            }
+            
+            tr:nth-child(odd) {
+                background-color: #fff
+            }
+            
+            tr:nth-child(even) {
+                background-color: #eee
+            }
+            
+            a {
+                text-decoration: none;
+                color: black;
+            }
+            
+            a:hover {
+                text-decoration: underline;
+            }
+            
+            a.expander {
+                color: black;
+                font-style: italic;
+                cursor: pointer;
+            }
+            
+            tr {
+                display: none;
+            }
+            
+            tr:nth-child(1) {
+                display: table-row;
+            }
+            
+            table.expanded tr {
+                display: table-row;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <div class="header">Contents</div>
+    
+        <hr>
+    
+        <div class="contents">
+            <div class="contentsCol">
+                <h1>Overview</h1>
+            </div>
+            <div class="contentsCol">
+                <h3>Introduction</h3>
+                <h3>Basic Approach</h3>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="contents">
+            <div class="contentsCol">
+                <h1>Balanced NT Openings</h1>
+            </div>
+            <div class="contentsCol">
+                <h3><a href="#headerBalNT">Notrump Structure</a></h3>
+                <ul>
+                    <h3><a href="#headerStayman">Stayman</a></h3>
+                    <h3><a href="#headerJacobyTransfers">Jacoby Transfers</a></h3>
+                    <h3><a href="#headerMinorTransfers">Minor Suit Transfers</a></h3>
+                    <h3><a href="#headerMuppetStayman">Muppet Stayman</a></h3>
+                    <h3><a href="#headerBrokenSuitTransfers">Broken Suit Transfers</a></h3>
+                </ul>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="contents">
+            <div class="contentsCol">
+                <h1>Minor Suit Openings</h1>
+            </div>
+            <div class="contentsCol">
+                <h3><a href="#header1COpening">Balanced 1!C Opening</a></h3>
+                <ul>
+                    <h3><a href="#header1C_MajorTransfers">1!D / 1!H Transfers</a></h3>
+                    <h3><a href="#header1C_1STransfer">1!S Transfer</a></h3>
+                    <h3><a href="#header1C_BalancedNTResponses">Balanced NT Responses</a></h3>
+                    <h3><a href="#header1C_DiamondResponses">Diamond Responses</a></h3>
+                    <h3><a href="#header1C_MajorSplinters">Major Splinters</a></h3>
+                </ul>
+                <br>
+                <h3><a href="#header1DOpening">Unbalanced 1!D Opening</a></h3>
+                <ul>
+                    <h3><a href="#header1D_MajorResponses">1!H / 1!S Responses</a></h3>
+                    <h3><a href="#header1D_BalancedNTResponses">Semi-Balanced NT Responses</a></h3>
+                    <h3><a href="#header1D_2CResponse">2!C Response</a></h3>
+                </ul>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="contents">
+            <div class="contentsCol">
+                <h1>Major Suit Openings</h1>
+            </div>
+            <div class="contentsCol">
+                <h3><a href="#header1MOpenings">1!H / 1!S Openings</a></h3>
+                <ul>
+                    <h3><a href="#header1M_OneLevelResponses">1!S and 1 NT Responses</a></h3>
+                    <h3><a href="#header1M_Gazzilli">Gazzilli</a></h3>
+                    <h3><a href="#header1M_2Over1">Two Over One</a></h3>
+                    <h3><a href="#header1M_Raises">Major Raises</a></h3>
+                </ul>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <br><br>
+        <br><br>
+        
+        <div id="secBalNT">
+            <div class="header" id="headerBalNT">Balanced NT Openings</div>
+            <hr>
+            <ul>
+                <li><p>With a weak hand, and either a long suit (5+ major or 6+ minor) or length in both majors, transfer/bid stayman and pass.</p></li>
+                <li><p>With stronger hands with major length, also start by transferring/bidding stayman, then make an appropriate rebid to show shape and strength.</p></li>
+                <li><p>With invitational to game forcing hands looking to play in NT, invite through the 2!S range ask transfer or simply bid 3 NT.</p></li>
+                <li><p>With slam invitational hands looking to play in NT, ask about aces with 4!C gerber or invite with 4 NT.</p></li>
+                <li><p>With stronger hands not looking to play in NT, start by either showing shortness or transferring to your long minor.</p></li>
+            </ul>
+            <table id="1NT_Responses">
+                <tr>
+                    <td><h4>1 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>Stayman</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D / 2!H</h4></td>
+                    <td><span>Jacoby Transfers; 5+ !H / !S</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>Invite to 3 NT or 6+ !C</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>6+ !D</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>!C / !D / !S Shortness; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>Broken Suit Transfer; 6+ !H; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>Broken Suit Transfer; 6+ !S; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>!H Shortness; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>Gerber</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D / 4!H</h4></td>
+                    <td><span>Texas Transfers; 6+ !H / !S; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>Quantitative</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="2NT_Responses">
+                <tr>
+                    <td><h4>2 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>Muppet Stayman; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D / 3!H</h4></td>
+                    <td><span>Jacoby Transfers; 5+ !H / !S</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>Gerber</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D / 4!H</h4></td>
+                    <td><span>Texas Transfers; 6+ !H / !S; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>Quantitative</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h1 id="headerStayman">Stayman</h1>
+            <hr>
+            <table id="1NT_2C_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>No 4 Card Major</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>4+ !H</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>4+ !S</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2D_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>4+ !D; 4-3+ !H / !S; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>4-4+ !H / !S; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>5+ !S; Inv</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>Inv</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>SARS; Relay for Opener's Minor Holdings</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>Quest Transfer; 5+ !H; 4!S; Inv+</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>Quest Transfer; 5+ !S; 4!H; Inv+</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D / 4!H</h4></td>
+                    <td><span>Delayed Texas Transfer; 6+ !H / !S; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>Quantitative</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2H_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>3+ !H; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>5+ !S; Inv</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>4!S; Inv</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>SARS; Relay for Opener's Shape</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>ASID; Relay for Opener's Shape</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>4+ !H; Inv</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !H; Unspecified Shortness; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>4!S; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>4+ !H; Balanced; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>4+ !H; RKC !H</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>4!S; Quantitative</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2S_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>3+ !S; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>4!H; Inv</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>SARS; Relay for Opener's Shape</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>ASID; Relay for Opener's Shape</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>4+ !S; Unspecified Shortness; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !S; Inv</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>4!H; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>4+ !S; Balanced; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>4+ !S; RKC !S</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>4!H; Quantitative</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h2 id="headerSARS">SARS (Shape Asking Relay after Stayman)</h2>
+            <hr>
+            <table id="1NT_2C_2D_3C_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>5+ !C / !D</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>3334</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>3343</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>(32)44</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>2245</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>2254</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2H_3C_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!H - 3!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4+ !C / !D</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>5!H</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4!S</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>3433</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2S_3C_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!S - 3!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4+ !D</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>4+ !C</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>5!S</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>4333</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h2 id="headerASID">ASID (Advanced Stayman in Doubt)</h2>
+            <hr>
+            <table id="1NT_2C_2H_3D_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!H - 3!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>3433 Min</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S / 4!C / 4!D</h4></td>
+                    <td><span>4!H; 2!S / !C / !D</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>3433 Max</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>5!H</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2S_3D_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!S - 3!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4333 Min</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H / 4!C / 4!D</h4></td>
+                    <td><span>4!S; 2!H / !C / !D</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>4333 Max</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>5!S</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h2 id="headerQuestTransfers">Quest Transfers</h2>
+            <hr>
+            <table id="1NT_2C_2D_3D_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>Default Response</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S / 4!C / 4!D</h4></td>
+                    <td><span>3!H; Ace of !S / !C / !D; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>Accept Inv; 2- !H</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>Accept Inv; 3!H; No Side Ace</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2D_3H_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>Default Response</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>Accept Inv; 2- !S</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C / 4!D / 4!H</h4></td>
+                    <td><span>3!S; Ace of !C / !D / !H; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>Accept Inv; 3!S; No Side Ace</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2D_3D_3H_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!D - 3!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>5!H; 4!S; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>6+ !H; 4!S; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>6+ !H; 4!S; To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2D_3H_3S_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!H - 3!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>5!S; 4!H; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>6+ !S; 4!H; GF</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2D_3D_3S_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!D - 3!S / 4!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2D_3D_4D_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!D - 4!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>RKC</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT / 5!C / 5!D</h4></td>
+                    <td><span>Cue Bid; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>5!H</h4></td>
+                    <td><span>Inv to Slam</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2D_3D_3NT_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!D - 3 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>5!H; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>6+ !H; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>6+ !H; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>5!H; Quantitative</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2D_3H_4C_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!H - 4!C / 4!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2D_3H_4H_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!H - 4!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>RKC</span></td>
+                </tr>
+                <tr>
+                    <td><h4>5!C / 5!D / 5!H</h4></td>
+                    <td><span>Cue Bid; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>5!S</h4></td>
+                    <td><span>Inv to Slam</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2C_2D_3H_3NT_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!C - 2!D - 3!H - 3 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>5!S; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>6+ !S; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>6+ !S; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>5!S; Quantitative</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h1 id="headerJacobyTransfers">Jacoby Transfers</h1>
+            <hr>
+            <table id="1NT_2D_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>Default Response</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S / 3!C / 3!D</h4></td>
+                    <td><span>4+ !H; 2!S / !C / !D; 16-17 pts</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2H_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>Default Response</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C / 3!D / 3!H</h4></td>
+                    <td><span>4+ !S; 2!C / !D / !H; 16-17 pts</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2D_2H_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!D - 2!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>5+ !H; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>5!H; 5!S; Inv+; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>5!H; Inv; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>5+ !H; 4!C; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>5+ !H; 4!D; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !H; Inv; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S / 4!C / 4!D</h4></td>
+                    <td><span>6+ !H; Cue Bid; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>5!H; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>6+ !H; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>6+ !H; RKC</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2H_2S_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!H - 2!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>5+ !S; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>5!S; Inv; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>5+ !S; 4!C; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>5+ !S; 4!D; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>6+ !S; Inv; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>5 !H; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C / 4!D / 4!H</h4></td>
+                    <td><span>6+ !S; Cue Bid; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>6+ !S; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>6+ !H; RKC</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="2NT_3D_Responses">
+                <tr>
+                    <td><h4>2 NT - 3!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>Default Response</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S / 4!C / 4!D</h4></td>
+                    <td><span>4+ !H; 2!S / !C / !D</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="2NT_3H_Responses">
+                <tr>
+                    <td><h4>2 NT - 3!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>Default Response</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C / 4!D / 4!H</h4></td>
+                    <td><span>4+ !H; 2!C / !D / !H</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="2NT_3D_3H_Responses">
+                <tr>
+                    <td><h4>2 NT - 3!D - 3!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>5+ !H; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>5!H; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>5+ !H; 4!S; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C / 4!D</h4></td>
+                    <td><span>6+ !H; Cue Bid; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>6+ !H; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>6+ !H; RKC</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="2NT_3H_3S_Responses">
+                <tr>
+                    <td><h4>2 NT - 3!H - 3!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>5+ !H; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>5!H; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C / 4!D / 4!H</h4></td>
+                    <td><span>6+ !S; Cue Bid; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>6+ !S; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>6+ !S; RKC</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h1 id="headerMinorTransfers">Minor Suit Transfers</h1>
+            <hr>
+            <table id="1NT_2S_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>Min</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>Max</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2NT_Responses">
+                <tr>
+                    <td><h4>1 NT - 2 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>Bad !D Support</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>Fine !D Support</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2S_2NT_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!S - 2 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>6+ !C; !D Shortness OR No Shortness; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !C; !H Shortness; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>6+ !C; !S Shortness; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>RKC !C</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_2S_3C_Responses">
+                <tr>
+                    <td><h4>1 NT - 2!S - 3!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>6+ !C; !D Shortness OR No Shortness; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !C; !H Shortness; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>6+ !C; !S Shortness; Inv to Slam</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>RKC !C</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>Quantitative</span></td>
+                </tr>
+            </table>
+        
+            <br><br>
+            
+            <h1 id="headerMuppetStayman">Muppet Stayman</h1>
+            <hr>
+            <table id="2NT_3C_Responses">
+                <tr>
+                    <td><h4>2 NT - 3!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>No 5 Card Major; 4!H / !S</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>No 4 or 5 Card Major</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>5!S</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>5!H</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="2NT_3C_3D_Responses">
+                <tr>
+                    <td><h4>2 NT - 3!C - 3!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>4!S</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4!H</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>4!H; 4!S</span></td>
+                </tr>
+            </table>
+        
+            <br><br>
+            
+            <h1 id="headerBrokenSuitTransfers">Broken Suit Transfers</h1>
+            <hr>
+            <table id="1NT_3D_Responses">
+                <tr>
+                    <td><h4>1 NT - 3!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>Slam Interest</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>Prefers NT</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1NT_3H_Responses">
+                <tr>
+                    <td><h4>1 NT - 3!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>Slam Interest</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>Prefers NT</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+        </div>
+        
+        <br><br><br>
+        
+        <div id="secMinorOpenings">
+            <div class="header" id="header1DOpening">1!D Opening</div>
+            <hr>
+            <table id="1D_Responses">
+                <tr>
+                    <td><h4>1!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>1!H</h4></td>
+                    <td><span>4+ !H; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>1!S</h4></td>
+                    <td><span>4+ !S; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>1 NT</h4></td>
+                    <td><span>3- !H; 3- !S; 6-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>6+ !D Inv/GF or Balanced GF; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>6+ !H/!S; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>5!S; 4!H; 5-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>6+ !C Inv/GF; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>Balanced; 11-12 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>6+ !C; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4+ !D; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H / 3!S / 4!C</h4></td>
+                    <td><span>4+ !D; 1- !H / !S / !C; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>4+ !D; RKC</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1D_1H_Responses">
+                <tr>
+                    <td><h4>1!D - 1!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>1!S</h4></td>
+                    <td><span>4+ !S; 11-18 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>1 NT</h4></td>
+                    <td><span>4+ !C; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>6+ !D; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>3!H; 5+ !D; 11-15 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>4!H; 11-15 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>4+ !S; 19+ pts</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>5+ !C; 16+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>Solid 6+ !D or 7+ !D; 16+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>6+ !D; 3!H; 16-18 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>4+ !H; 16-18 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S / 4!C</h4></td>
+                    <td><span>4+ !H; 1- !S / !C; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>4+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>4+ !H; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>4+ !H; RKC</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1D_1S_Responses">
+                <tr>
+                    <td><h4>1!D - 1!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>1 NT</h4></td>
+                    <td><span>4+ !C; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>5+ !D; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>3!S; 5+ !D; 11-15 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>4+ !H; 16+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>4!S; 11-15 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>5+ !C; 16+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>Solid 6+ !D or 7+ !D; 16+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>6+ !D; 3!S; 16-18 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !D; 3!S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !S; 16-18 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>4+ !S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C / 4!H</h4></td>
+                    <td><span>4+ !S; 1- !C / !H; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>4+ !S; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>4+ !S; RKC</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1D_1H_1S_Responses">
+                <tr>
+                    <td><h4>1!D - 1!H - 1!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>P</h4></td>
+                    <td><span>3+ !S; 5-7 pts</span></td>
+                </tr>
+                <tr>
+                    <td><h4>1 NT</h4></td>
+                    <td><span>Balanced; 5-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>4th suit; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>2+ !D; 5-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>6+ !H; 5-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>4!S; 8-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>bal; 11-12 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>5+ !C; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>3+ !D; 10-12 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !H; 10-12 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !S; 10-12 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C / 4!D</h4></td>
+                    <td><span>4+ !S; 1- !C / !D; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>6+ !H; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>4+ !S; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>4+ !S; RKC</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1D_1H_1NT_Responses">
+                <tr>
+                    <td><h4>1!D - 1!H - 1 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>Transfer Completed; 3+ !C; 5-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>Correcting Partscore; 2+ !D; 5-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>Correcting Partscore; 6+ !H; 8-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>Balanced; 11+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>4+ !C; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>3+ !D; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>6+ !H; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>6+ !H; To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1D_1H_2C_Responses">
+                <tr>
+                    <td><h4>1!D - 1!H - 2!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>Transfer Completed; 1+ !D; 5-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>Correcting Partscore; 6+ !H; 8-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>Balanced; 11+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>4+ !C; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>2+ !D; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>6+ !H; 10-12 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>GF; ?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>6+ !H; To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1D_1S_1NT_Responses">
+                <tr>
+                    <td><h4>1!D - 1!S - 1 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>Transfer Completed; 3+ !C; 5-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>Correcting Partscore; 2+ !D; 5-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>Correcting Partscore; 6+ !S; 8-10 pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>Balanced; 11+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>4+ !C; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>3+ !D; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4!H; 5+ !S; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !S; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>6+ !S; To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1D_1S_2C_Responses">
+                <tr>
+                    <td><h4>1!D - 1!S - 2!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>Transfer Completed; 1+ !D; 5-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>Correcting Partscore; 6+ !S; 5-10 pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>Balanced; 11+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>4+ !C; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>2+ !D; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4!H; 5+ !S; 10-12 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !S; 10+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4!H; 5+ !S; 13+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>6+ !S; To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1D_2C_Responses">
+                <tr>
+                    <td><h4>1!D - 2!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>Deny Invite; No Stopper to Bid; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>!H Stopper</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>!S Stopper; Denies !H Stopper</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>!C Stopper; Denies !H/!S Stoppers</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>Accept Invite; No Shortness; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>Deny Invite; 6+ !D; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>Accept Invite; 1- !H; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>Accept Invite; 1- !S; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>Accept Invite; 1- !C; GF</span></td>
+                </tr>
+            </table>
+        </div>
+        
+        <br><br><br>
+        
+        <div id="sec1MOpenings">
+            <div class="header" id="header1MOpenings">1!H / 1!S Openings</div>
+            <hr>
+            <table id="1H_Responses">
+                <tr>
+                    <td><h4>1!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>1!S</h4></td>
+                    <td><span>4+ !S; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>1 NT</h4></td>
+                    <td><span>Default Response w/o GF values, 4+ !S, or !H Fit</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>5+ !C or Bal 2+ !C; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>5+ !D; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>Constructive Raise; 3+ !H; 8-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>6+ !S; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>Jacoby 2 NT; 4+ !H; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>6+ !C; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>Mixed Raise; 4+ !H; 7-10 pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>Weak Raise; 4+ !H; 0-6 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S / 4!C / 4!D</h4></td>
+                    <td><span>4+ !H; !S / !C / !D Shortness; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>3!H; Balanced; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>RKC</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1S_Responses">
+                <tr>
+                    <td><h4>1!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>1 NT</h4></td>
+                    <td><span>Default Response w/o GF values or !S Fit</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>5+ !C or Bal 2+ !C; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>5+ !D; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>5+ !H; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>Constructive Raise; 3+ !S; 8-10 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>Jacoby 2 NT; 4+ !S; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>6+ !C; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>6+ !D; Weak</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>Mixed Raise; 4+ !S; 7-10 pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>Weak Raise; 4+ !S; 0-6 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>3!S; Balanced; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C / 4!D / 4!H</h4></td>
+                    <td><span>4+ !S; !C / !D / !H Shortness; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4 NT</h4></td>
+                    <td><span>RKC</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h1 id="header1M_OneLevelResponses">1!S and 1 NT Responses</h1>
+            <hr>
+            <p>2!C is used as Gazzilli, showing either a 17+ unbalanced hand, or a natural 2M rebid. Non-jump rebids are natural, jump rebids show 14-16 points with extreme shape. 2 NT is used to show 18-19 balanced, and does not go through Gazzilli.</p>
+            <table id="1H_1S_Responses">
+                <tr>
+                    <td><h4>1!H - 1!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>1 NT</h4></td>
+                    <td><span>Balanced; 11-14 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>6+ !H OR 17+ pts Unbalanced; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>4+ !D; 11-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>5!H; 4+ !C; 11-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>3+ !S; 11-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>Balanced; 18-19 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>5+ !C; 14-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>5+ !D; 14-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>7+ !H; 14-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !S; 14-16 pts; NF</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1NT_Responses">
+                <tr>
+                    <td><h4>1!H - 1 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>6+ !H OR 17+ Unbalanced; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>4+ !D; 11-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>5!H; 4+ !C; 11-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>5+ !S; 6+ !H; 14-16 pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>Balanced; 18-19 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>5+ !C; 14-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>5+ !D; 14-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>7+ !H; 14-16 pts; NF</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1S_1NT_Responses">
+                <tr>
+                    <td><h4>1!S - 1 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!C</h4></td>
+                    <td><span>6+ !S OR 17+ Unbalanced; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>4+ !D; 11-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>4+ !H; 11-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>5!S; 4+ !C; 11-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>Balanced; 18-19 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>5+ !C; 14-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>5+ !D; 14-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>5+ !H; 14-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>7+ !S; 14-16 pts; NF</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h1 id="header1M_Gazzilli">Gazzilli</h1>
+            <hr>
+            <p>After 2!C Gazzilli, responder either shows a positive, setting a game force opposite a strong opener, or makes a natural shape-showing negative, looking for a playable strain. Preference for partner's major should be shown in most cases, even with a singleton. A strong opener without a 6 card major will scramble to find a playable contract.</p>
+            <table id="1H_1S_2C_Responses">
+                <tr>
+                    <td><h4>1!H - 1!S - 2!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>Accept GF invite; 8+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>7- pts; 1-3 !H; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>7- pts; 5+ !S; 1- !H; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>7- pts; 4+ !C; 4+ !D; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>7- pts; 5+ !C; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>7- pts; 5+ !D; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>10-12 pts; 3!H; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>10-12 pts; 6+ !S; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1NT_2C_Responses">
+                <tr>
+                    <td><h4>1!H - 1 NT - 2!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>Accept GF invite; 8+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>7- pts; 1-3 !H; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>7- pts; 5+ !D; 4+ !C; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>7- pts; 5+ !C; 4+ !D; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>7- pts; 6+ !C; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>7- pts; 6+ !D; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>10-12 pts; 3!H; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1S_1NT_2C_Responses">
+                <tr>
+                    <td><h4>1!S - 1 NT - 2!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!D</h4></td>
+                    <td><span>Accept GF invite; 8+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>7- pts; 5+ !H; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>7- pts; 1-3 !S; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>7- pts; 4+ !C; 4+ !D; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>7- pts; 5+ !C; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>7- pts; 5+ !D; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>10-12 pts; 6+ !H; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>10-12 pts; 3!S; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h2 id="header1M_GazzilliPositive">Positive Responses</h2>
+            <hr>
+            <p>After a simple positive response, continuations are natural and shape-showing for the most part. Rebidding the original major shows a natural 2M rebid. All other continuations are game forcing. After an invitational positive, game contracts are to play, with all other continuations showing 17+ and slam interest.</p>
+            <table id="1H_1S_2C_2D_Responses">
+                <tr>
+                    <td><h4>1!H - 1!S - 2!C - 2!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>11-16 pts; 6+ !H; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>3!S; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>5+ !H; 4+ !C/!D; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>5+ !H; 5+ !C; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>5+ !H; 5+ !D; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !H; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !S; No Shortness; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1S_2C_3H_Responses">
+                <tr>
+                    <td><h4>1!H - 1!S - 2!C - 3!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S / 4!C / 4!D</h4></td>
+                    <td><span>17+ pts; !S / !C / !D Cue Bids; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>Choice of Games; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1S_2C_3S_Responses">
+                <tr>
+                    <td><h4>1!H - 1!S - 2!C - 3!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C / 4!D</h4></td>
+                    <td><span>2+ !S; 17+ pts; !C / !D Cue Bids; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1NT_2C_2D_Responses">
+                <tr>
+                    <td><h4>1!H - 1 NT - 2!C - 2!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>11-16 pts; 6+ !H; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>5+ !H; 4+ !S; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>5+ !H; 4+ !C/!D; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>5+ !H; 5+ !C; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>5+ !H; 5+ !D; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !H; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1NT_2C_3H_Responses">
+                <tr>
+                    <td><h4>1!H - 1 NT - 2!C - 3!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S / 4!C / 4!D</h4></td>
+                    <td><span>17+ pts; !S / !C / !D Cue Bids; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>Choice of Games; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1S_1NT_2C_2D_Responses">
+                <tr>
+                    <td><h4>1!S - 1 NT - 2!C - 2!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!H</h4></td>
+                    <td><span>5+ !S; 4+ !H; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>6+ !S; 11-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>5+ !S; 4+ !C/!D; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>5+ !S; 5+ !C; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>5+ !S; 5+ !D; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>5+ !S; 5+ !H; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>6+ !S; 17+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1S_1NT_2C_3H_Responses">
+                <tr>
+                    <td><h4>1!S - 1 NT - 2!C - 3!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>1- !H; 6+ !S; 11-14 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1S_1NT_2C_3S_Responses">
+                <tr>
+                    <td><h4>1!S - 1 NT - 2!C - 3!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C / 4!D / 4!H</h4></td>
+                    <td><span>17+ pts; !C / !D / !H Cue Bids; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h2 id="header1M_Gazzilli1H1SNegative">1!H - 1!S Negative Responses</h2>
+            <hr>
+            <p>After a negative response, game contracts are to play, bidding either major at the 3-level sets trumps and invites cue bidding. When available, 2 NT is used as a scramble, looking for a playable strain.</p>
+            <table id="1H_1S_2C_2H_Responses">
+                <tr>
+                    <td><h4>1!H - 1!S - 2!C - 2!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>3+ !S; 17-19 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>17-19 pts; Scramble; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>4+ C; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4+ D; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1S_2C_2S_Responses">
+                <tr>
+                    <td><h4>1!H - 1!S - 2!C - 2!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>17-19 pts; Scramble; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>4+ !C; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4+ !D; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>7+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>3+ !S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1S_2C_2NT_Responses">
+                <tr>
+                    <td><h4>1!H - 1!S - 2!C - 2 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>3+ !C; 17-19 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>3+ !D; 17-19 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>7+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>4+ !C; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>4+ !D; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1S_2C_3C_Responses">
+                <tr>
+                    <td><h4>1!H - 1!S - 2!C - 3!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4+ !D; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>7+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>3+ !C; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1S_2C_3D_Responses">
+                <tr>
+                    <td><h4>1!H - 1!S - 2!C - 3!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>7+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>3+ !D; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h2 id="header1M_Gazzilli1H1NTNegative">1!H - 1 NT Negative Responses</h2>
+            <hr>
+            <p>After a negative response, game contracts are to play, rebidding your major at the 3-level sets trumps and invites cue bidding. When available, 2 NT is used as a scramble, looking for a playable strain.</p>
+            <table id="1H_1NT_2C_2H_Responses">
+                <tr>
+                    <td><h4>1!H - 1 NT - 2!C - 2!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>17-19 pts; Scramble; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>4+ C; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4+ D; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>6+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1NT_2C_2S_Responses">
+                <tr>
+                    <td><h4>1!H - 1 NT - 2!C - 2!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>3- !C; 2- !D; 17-19 pts; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>3+ !C; 17-19 pts; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>2+ !D; 17-19 pts; To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>7+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>4+ !C; 19+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>3+ !D; 19+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1NT_2C_2NT_Responses">
+                <tr>
+                    <td><h4>1!H - 1 NT - 2!C - 2 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>2+ !C; 17-19 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>3+ !D; 17-19 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>7+ !H; 19+ pts; GF</span></td>
+                </tr>
+               <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>3+ !C; 19+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>4+ !D; 19+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1NT_2C_3C_Responses">
+                <tr>
+                    <td><h4>1!H - 1 NT - 2!C - 3!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>7+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>2+ !C; 19+ pts; GF</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1H_1NT_2C_3D_Responses">
+                <tr>
+                    <td><h4>1!H - 1 NT - 2!C - 3!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>7+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>2+ !D; 19+ pts; GF</span></td>
+                </tr>
+            </table>
+            
+            <br><br>
+            
+            <h2 id="header1M_Gazzilli1S1NTNegative">1!S - 1 NT Negative Responses</h2>
+            <hr>
+            <p>After a negative response, game contracts are to play, rebidding your major at the 3-level sets trumps and invites cue bidding. When available, 2 NT is used as a scramble, looking for a playable strain.</p>
+            <table id="1S_1NT_2C_2H_Responses">
+                <tr>
+                    <td><h4>1!S - 1 NT - 2!C - 2!H - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2!S</h4></td>
+                    <td><span>6+ !S; 2- !H; 11-16 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>17-19 pts; Scramble; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>4+ C; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4+ D; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>3+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>7+ !S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!H</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1S_1NT_2C_2S_Responses">
+                <tr>
+                    <td><h4>1!S - 1 NT - 2!C - 2!S - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>2 NT</h4></td>
+                    <td><span>17-19 pts; Scramble; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>4+ !C; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>4+ !D; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>4+ !H; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>6+ !S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1S_1NT_2C_2NT_Responses">
+                <tr>
+                    <td><h4>1!S - 1 NT - 2!C - 2 NT - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!C</h4></td>
+                    <td><span>3+ !C; 17-19 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>3+ !D; 17-19 pts; NF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>4+ !H; 19+ pts; GF</span></td>
+                </tr>
+               <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>7+ !S; 19+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>4+ !C; 19+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>4+ !D; 19+ pts; F1</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1S_1NT_2C_3C_Responses">
+                <tr>
+                    <td><h4>1!S - 1 NT - 2!C - 3!C - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!D</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>7+ !S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!C</h4></td>
+                    <td><span>3+ !C; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+            <br>
+            <table id="1S_1NT_2C_3D_Responses">
+                <tr>
+                    <td><h4>1!S - 1 NT - 2!C - 3!D - ?</h4></td>
+					<td><a class="expander">Expand</a></td>
+                </tr>
+                <tr>
+                    <td><h4>3!H</h4></td>
+                    <td><span>?</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3!S</h4></td>
+                    <td><span>7+ !S; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>3 NT</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!D</h4></td>
+                    <td><span>3+ !D; 19+ pts; GF</span></td>
+                </tr>
+                <tr>
+                    <td><h4>4!S</h4></td>
+                    <td><span>To Play</span></td>
+                </tr>
+            </table>
+        </div>
+        
+        <br><br>
+        <br><br>
+        <br><br>
+        <br><br>
+        <br><br>
+        <br><br>
+        <br><br>
+        <br><br>
+        <br><br>
+        <br><br>
+        <br><br>
+        <br><br>
+    </body>
+</html>
